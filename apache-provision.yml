@@ -1,0 +1,31 @@
+---
+- hosts: frontend
+  vars:
+    http_port: 80
+    max_clients: 1212
+  remote_user: vagrant
+  become: true
+  tasks:
+  - name: actualizacion de httpd
+    package:
+      name: httpd
+      state: latest
+    notify: restart_server
+  - name: arrancar httpd service
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: genera fichero con template
+    template:
+      scr: templates/httpd.conf.j2
+  - name: copy configuration file
+    copy:
+      src: /home/a
+      dest: /tmp/p.txt
+    notify: restart_server  
+  handlers:
+    - name: restart_server
+      service:
+        name: httpd
+        state: restarted
